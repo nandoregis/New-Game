@@ -139,10 +139,9 @@ const objetos = [
  * -----------------------
  */
 
-class Terreno {
+class Chucks {
     constructor() {
         this.chucks;
-        this.bioma;
     }
 
     generate_chucks() {
@@ -165,7 +164,7 @@ class Terreno {
                 const chuck = {
                     positionX: x1,
                     positionY: y1,
-                    items: [],
+                    item: {},
                     colision: false
                 };
                 
@@ -194,45 +193,18 @@ class Terreno {
         return new_chucks;
     }
 
-    add_obj_chucks(id, count_chucks) {
 
-        let obj = objetos.filter( ( item ) =>{
-            return item.id === id;
-        })[0];
-        
-        const elemento = this.get_chucks_division(count_chucks);
+}
 
-        elemento.forEach( el => {
-            el.items.push(obj);
-            el.colision = obj.colision;
-        });
-
-        return elemento;
-    }
-
-    init() {
-
-        this.generate_chucks();
-
-        let arbusto = this.add_obj_chucks(1, 10);
-        let tree = this.add_obj_chucks(2, 5);
-        let capim = this.add_obj_chucks(3, 60);
-
-        const chucks = [...tree, ...arbusto, ...capim];
-
-        this.bioma = chucks;
-        
-        console.log(chucks);
-        
-        return chucks;
+class Elemento {
+    constructor({ position, sprite}) {
+        this.image = new Image();
+        this.image.src = sprite;
+        this.position = position;
     }
 
     draw() {
-        this.bioma.forEach( el => {
-            this.image = new Image();
-            this.image.src = el.items[0].sprite;
-            ctx.drawImage(this.image, el.positionX, el.positionY);
-        });
+        ctx.drawImage(this.image, this.position.x, this.position.y)
     }
 
     update() {
@@ -240,14 +212,84 @@ class Terreno {
     }
 }
 
-const map = new Terreno();
-const chucks = map.init();
+class Map {
+    constructor() {
+        this.items = [];
+        this.chucks = new Chucks();
+        this.chucks.generate_chucks();
+    }
+
+    insert_item ( id, count ) {
+        const ch = this.chucks.get_chucks_division(count);
+        const object = this.filter_item(id);
+        const chucksAlteradas = this.insert_item_chuck(object,ch);
+
+        this.items.push(chucksAlteradas);
+    }
+
+    filter_item(id) {
+        const elemento = objetos.filter( item => {
+            return item.id === id;
+        })[0];
+
+        return elemento;
+    }
+
+    insert_item_chuck(object, chucks) {
+        chucks.forEach(element => {
+            element.item = object ;
+            element.colision = object.colision;
+        });
+
+        return chucks;
+    }
+
+    get_all_chuck() {
+        const destruturar = []
+        this.items.forEach( element => { destruturar.push(...element);});
+        return destruturar;
+    }
+
+    draw_map() {
+        
+        for(let i = 0; i < this.items.length; i++) {
+
+            this.items[i].forEach( object => {
+
+                const element = new Elemento({
+                    position: {x: object.positionX, y: object.positionY},
+                    sprite : object.item.sprite
+                });
+
+                element.draw();
+            });
+        }
+    }
+}
+
+
+const map = new Map;
+
+map.insert_item(1, 10);
+map.insert_item(2, 5);
+
+
+const chucks = map.get_all_chuck();
+console.log('por fora: ', chucks);
+
+
 
 //----------------
 
 const player = new Player({
     imgSrc : './assets/player/Idle.png'
 });
+
+const arbusto = new Elemento({
+    position : { x: 0, y : 64 },
+    sprite : './assets/terreno/arbusto.png'
+});
+
 player.render();
 
 const movimentacao = () => {
@@ -272,8 +314,6 @@ const movimentacao = () => {
               break;   
             
         }
-
-        console.log('X: '+player.position.x + ' / ' + 'Y: ' + player.position.y);
 
         
     });
@@ -311,40 +351,41 @@ function loop () {
 
     condicao_movimentos();
     
-    map.update();
+    map.draw_map();
+    arbusto.update();
     player.update();
     
 }
 
 loop();
 
-function adicionar_itens_nas_chucks() {
-    /**
-     * - saber quantos item quero de e ter o sprite.
-     * - ver se item deve dropar algo.
-     * 
-     */
+// function adicionar_itens_nas_chucks() {
+//     /**
+//      * - saber quantos item quero de e ter o sprite.
+//      * - ver se item deve dropar algo.
+//      * 
+//      */
 
-    let quantidade_max = 20;
-    const new_chucks = [];
-    // 160 - chucks
+//     let quantidade_max = 20;
+//     const new_chucks = [];
+//     // 160 - chucks
 
-    for(i = 0; i < quantidade_max; i++) {
-        let numero = Math.floor(Math.random() * chucks.length - 1 );
+//     for(i = 0; i < quantidade_max; i++) {
+//         let numero = Math.floor(Math.random() * chucks.length - 1 );
 
-        let pegar = chucks.splice(numero,1);
+//         let pegar = chucks.splice(numero,1);
 
-        new_chucks.push(pegar[0]);
+//         new_chucks.push(pegar[0]);
 
-    }
+//     }
 
 
-    console.log('escolhidas ',new_chucks);
-    console.log('antigo ', chucks);
+//     console.log('escolhidas ',new_chucks);
+//     console.log('antigo ', chucks);
 
     
 
-}
+// }
 
 
 function condicao_movimentos() {
@@ -419,10 +460,10 @@ function colision_chuck() {
         if(el.colision) {
             
             if( 
-                posMaisHeightY - 10 > ( el.positionY) &&
-                posMaisWidthX < el.positionX + pixel &&
-                posMaisHeightY < el.positionY + pixel &&
-                player.position.x  > el.positionX
+                player.position.y + 32 > ( el.positionY) &&
+                posMaisWidthX - 8 < el.positionX + pixel &&
+                posMaisHeightY - 16 < el.positionY + pixel &&
+                player.position.x + 16 > el.positionX
             
             ) { 
                 velocity = 0.1
