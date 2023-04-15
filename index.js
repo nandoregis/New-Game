@@ -1,8 +1,8 @@
 const CANVAS = document.getElementById('canvas');
 const ctx = CANVAS.getContext('2d');
 
-CANVAS.width = 1024;
-CANVAS.height = 640;
+CANVAS.width = window.innerWidth / 1.5;
+CANVAS.height = window.innerHeight / 1.2;
 
 
 CANVAS.style = `
@@ -80,47 +80,6 @@ class Player {
     }
 }
 
-
-// gerar chucks 
-/**
- *  
- * 
- */
-
-const gerenate_chucks = () => {
-    
-    const chucks = [];
-    
-    let valor_pixel = 64;
-    let lengX = CANVAS.width / valor_pixel;
-    let lengY = CANVAS.height / valor_pixel;
-
-    for(x = 0; x < lengX; x++) {
-
-        let x1 = x * valor_pixel;
-
-        for(y=0; y < lengY; y++) {
-
-            let y1 = y * valor_pixel;
-    
-            const chuck = {
-                positionX: x1,
-                positionY: y1,
-                items: [],
-                colision: false
-            };
-            
-            chucks.push(chuck);
-        }
-        
-    }
-
-    return chucks;
-}
-
-/**
- * ---------------------------
- */
 
 const objetos = [
     { id: 1, name: 'Arbusto', sprite : './assets/terreno/arbusto.png', drop : [
@@ -221,18 +180,30 @@ class Map {
 
     insert_item ( id, count ) {
         const ch = this.chucks.get_chucks_division(count);
-        const object = this.filter_item(id);
-        const chucksAlteradas = this.insert_item_chuck(object,ch);
+        const object = this.get_item_by_id(id);
 
+        if(!object) {
+            return;
+        }
+
+        const chucksAlteradas = this.insert_item_chuck(object,ch);
         this.items.push(chucksAlteradas);
+    }
+
+    get_item_by_id(id) {
+        const item = this.filter_item(id);
+
+        if( !item ) return null;  
+        return item;
     }
 
     filter_item(id) {
         const elemento = objetos.filter( item => {
             return item.id === id;
         })[0];
-
+        
         return elemento;
+
     }
 
     insert_item_chuck(object, chucks) {
@@ -267,27 +238,22 @@ class Map {
     }
 }
 
-
+// contruir objetos no mapa por quantidade e identificação 
+// primeiro argumento do insert_item é o id e segundo a quantidade
 const map = new Map;
 
 map.insert_item(1, 10);
-map.insert_item(2, 5);
+map.insert_item(2, 10);
+map.insert_item(3, 10);
+map.insert_item(3, 10);
 
 
 const chucks = map.get_all_chuck();
-console.log('por fora: ', chucks);
-
-
-
+console.log(chucks);
 //----------------
 
 const player = new Player({
     imgSrc : './assets/player/Idle.png'
-});
-
-const arbusto = new Elemento({
-    position : { x: 0, y : 64 },
-    sprite : './assets/terreno/arbusto.png'
 });
 
 player.render();
@@ -352,41 +318,11 @@ function loop () {
     condicao_movimentos();
     
     map.draw_map();
-    arbusto.update();
     player.update();
     
 }
 
 loop();
-
-// function adicionar_itens_nas_chucks() {
-//     /**
-//      * - saber quantos item quero de e ter o sprite.
-//      * - ver se item deve dropar algo.
-//      * 
-//      */
-
-//     let quantidade_max = 20;
-//     const new_chucks = [];
-//     // 160 - chucks
-
-//     for(i = 0; i < quantidade_max; i++) {
-//         let numero = Math.floor(Math.random() * chucks.length - 1 );
-
-//         let pegar = chucks.splice(numero,1);
-
-//         new_chucks.push(pegar[0]);
-
-//     }
-
-
-//     console.log('escolhidas ',new_chucks);
-//     console.log('antigo ', chucks);
-
-    
-
-// }
-
 
 function condicao_movimentos() {
     // movimento
@@ -427,16 +363,16 @@ function condicao_movimentos() {
 
 function colision_map() {
 
-    if(player.position.x < 0 ) {
-        player.position.x = 0;
+    if(player.position.x + 12 < 0 ) {
+        player.position.x = - 11 ;
     } else if (player.position.x > CANVAS.width) {
-        player.position.x = 0;
+        player.position.x = -11;
     }
 
-    if(player.position.y < 0 ) {
-        player.position.y = 0;
+    if(player.position.y + 12 < 0 ) {
+        player.position.y = -11;
     } else if (player.position.y > CANVAS.height) {
-        player.position.y = 0;
+        player.position.y = -11;
     }
 }
 
@@ -461,8 +397,8 @@ function colision_chuck() {
             
             if( 
                 player.position.y + 32 > ( el.positionY) &&
-                posMaisWidthX - 8 < el.positionX + pixel &&
-                posMaisHeightY - 16 < el.positionY + pixel &&
+                posMaisWidthX - 8 < (el.positionX + pixel) &&
+                posMaisHeightY + 4 < (el.positionY + pixel) &&
                 player.position.x + 16 > el.positionX
             
             ) { 
