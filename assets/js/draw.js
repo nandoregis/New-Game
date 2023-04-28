@@ -11,10 +11,9 @@ const player = new Player({
  */
 
 var arbusto = map.insert_item(1, 10); // ---> retorna uma array
-var grama = map.insert_item(3, 30);
+var grama = map.insert_item(3, 60);
 var tree = map.insert_item(2, 10);
 var stone = map.insert_item(2, 10);
-
 
 /**
  *  # PARAMETROS
@@ -36,3 +35,4 @@ function render_sprites_map() {
 }
 
 const chucks = map.get_all_chuck(); // CONST GLOBAL
+

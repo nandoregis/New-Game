@@ -1,13 +1,5 @@
 
-const keys = {
-    a : { pressed : false },
-    d : { pressed: false },
-    w : { pressed: false },
-    s : { pressed: false }
-}
-
 function movimentacao() {
-
     // movimentar personagem
     window.addEventListener('keydown', (e)=> {
 
@@ -29,7 +21,6 @@ function movimentacao() {
               break;   
             
         }
-
         
     });
     
@@ -58,6 +49,7 @@ function movimentacao() {
         
     });
 }
+
 
 function condicao_movimentos() {
   // movimento
@@ -94,5 +86,6 @@ function condicao_movimentos() {
   colision_map();
 
 }
+
 
 movimentacao();

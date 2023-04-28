@@ -2,6 +2,8 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
 }
 
 .my-canvas {
@@ -12,5 +14,92 @@
 }
 
 .my-canvas canvas {
-    border: 2px groove rgb(153, 153, 153);
+    border: 2px groove rgb(153, 153, 153);;
+}
+
+.mochila {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.5s;
+    opacity: 0.4;
+
+}
+
+.mochila:hover {
+    transition: all 0.5s;
+    opacity: 1;
+    background-color: rgba(78, 78, 78, 0.3) ;
+}
+
+.iventario.hide {
+    display: none;
+}
+
+.iventario {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgb(94, 86, 79);
+    width: 500px;
+    min-height: 200px;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.iventario__exit {
+    position: absolute;
+    top: -25px;
+    right: -25px;
+    width: 30px;
+    height: 30px;
+    background-color: #f3f3f3;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iventario ul {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.iventario ul li {
+    width: 25%;
+    height: 100px;
+    border: 4px solid rgb(126, 109, 92);
+    border-radius: 10px;
+}
+
+.iventario__box {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    border: 1.5px solid rgb(119, 104, 89);
+    box-shadow: inset 1px 1px 8px 3px rgb(119, 104, 89);
+    background-color: rgb(179, 154, 131);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.iventario__item-count {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.iventario__item-count p {
+    color: rgb(58, 58, 58);
 }

@@ -99,7 +99,6 @@ class Chucks {
         
         }
 
-        console.log('TUDO Gerado: ', chucks.length);
 
         this.chucks_total = chucks.length;
         this.chucks = chucks;
@@ -193,9 +192,7 @@ class Map {
                 element.colision = object.colision;
             });
         }
-        
-
-        console.log(chucks);
+    
         
         return chucks;
         
@@ -228,12 +225,8 @@ class Map {
 
         
         if(!chucks[0]) {
-            console.error("Não pode adicionar mais itens");
-            
-            
+            console.error("Nâo pode mais adicionar mais Sprites, chegou a o limite de terreno!");
             chucks = [ { positionX: -100, positionY: -100, item: { sprite: './assets/terreno/invisible.png'}, colision: false, desabled : true }];
-
-            
         }
 
         return chucks;
